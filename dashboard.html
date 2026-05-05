@@ -10,18 +10,15 @@
 :root{--bg2:#252525;--bg3:#2e2e2e;--border:rgba(255,255,255,0.07);--text:#e8e6e1;--text3:#5a5855;--blue:#5b9bd5;--amber:#d4920e;--red:#c05a5a;--purple:#8b7fd4}
 @media(prefers-color-scheme:light){:root{--bg2:#f7f6f3;--bg3:#efeeeb;--border:rgba(55,53,47,0.09);--text:#37352f;--text3:#9b9a97;--blue:#0b6fcc;--amber:#c17d10;--red:#c4372e;--purple:#6550b9}}
 body{font-family:'Inter',-apple-system,sans-serif;background:transparent;color:var(--text);padding:0;margin:0;-webkit-font-smoothing:antialiased}
-.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:4px}
-@media(max-width:520px){.tiles{grid-template-columns:repeat(2,1fr)}}
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:4px}
 .tile{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px 12px;position:relative;overflow:hidden}
 .tile::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
 .tile.blue::before{background:var(--blue)}.tile.amber::before{background:var(--amber)}.tile.red::before{background:var(--red)}.tile.purple::before{background:var(--purple)}
-.num{font-size:36px;font-weight:600;letter-spacing:-1.5px;line-height:1;margin-bottom:5px}
-@media(max-width:520px){.num{font-size:28px;margin-bottom:4px}}
-.mlabel{font-size:11px;color:var(--text3);font-weight:500}
+.num{font-size:32px;font-weight:600;letter-spacing:-1.5px;line-height:1;margin-bottom:5px}
+.mlabel{font-size:13px;color:#c9c7c2;font-weight:500}
 .tile.blue .num{color:var(--blue)}.tile.amber .num{color:var(--amber)}.tile.red .num{color:var(--red)}.tile.purple .num{color:var(--purple)}
-.ts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:4px}
-@media(max-width:520px){.ts{grid-template-columns:repeat(2,1fr)}}
-.t{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;height:82px}
+.ts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:4px}
+.t{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;height:75px}
 .sk{background:linear-gradient(90deg,var(--bg3) 25%,var(--bg2) 50%,var(--bg3) 75%);background-size:200% 100%;animation:sh 1.2s infinite;border-radius:4px}
 @keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
 .sk1{height:8px;width:55%;margin-bottom:10px}.sk2{height:28px;width:35%;margin-bottom:6px}.sk3{height:8px;width:65%}
