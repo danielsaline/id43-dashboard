@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ID43 Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg2:#252525;--bg3:#2e2e2e;--border:rgba(255,255,255,0.07);--text:#e8e6e1;--text3:#5a5855;--blue:#5b9bd5;--amber:#d4920e;--red:#c05a5a;--purple:#8b7fd4}
+@media(prefers-color-scheme:light){:root{--bg2:#f7f6f3;--bg3:#efeeeb;--border:rgba(55,53,47,0.09);--text:#37352f;--text3:#9b9a97;--blue:#0b6fcc;--amber:#c17d10;--red:#c4372e;--purple:#6550b9}}
+body{font-family:'Inter',-apple-system,sans-serif;background:transparent;color:var(--text);padding:0;margin:0;-webkit-font-smoothing:antialiased}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:4px}
+@media(max-width:520px){.tiles{grid-template-columns:repeat(2,1fr)}}
+.tile{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px 12px;position:relative;overflow:hidden}
+.tile::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.tile.blue::before{background:var(--blue)}.tile.amber::before{background:var(--amber)}.tile.red::before{background:var(--red)}.tile.purple::before{background:var(--purple)}
+.label{font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);margin-bottom:8px}
+.num{font-size:36px;font-weight:600;letter-spacing:-1.5px;line-height:1;margin-bottom:5px}
+.sub{font-size:11px;color:var(--text3)}
+.mlabel{display:none;font-size:11px;color:var(--text3);font-weight:500}
+@media(max-width:520px){.label,.sub{display:none}.mlabel{display:block}.num{font-size:28px;margin-bottom:4px}}
+.tile.blue .num{color:var(--blue)}.tile.amber .num{color:var(--amber)}.tile.red .num{color:var(--red)}.tile.purple .num{color:var(--purple)}
+.ts{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:4px}
+@media(max-width:520px){.ts{grid-template-columns:repeat(2,1fr)}}
+.t{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;height:82px}
+.sk{background:linear-gradient(90deg,var(--bg3) 25%,var(--bg2) 50%,var(--bg3) 75%);background-size:200% 100%;animation:sh 1.2s infinite;border-radius:4px}
+@keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.sk1{height:8px;width:55%;margin-bottom:10px}.sk2{height:28px;width:35%;margin-bottom:6px}.sk3{height:8px;width:65%}
+.upd{text-align:right;font-size:10px;color:var(--text3);padding:5px 4px 0;cursor:pointer}
+.upd:hover{color:#9b9890}
+.err{text-align:center;padding:16px;font-size:12px;color:var(--text3)}
+</style>
+</head>
+<body>
+<div id="L" class="ts">
+  <div class="t"><div class="sk sk1"></div><div class="sk sk2"></div><div class="sk sk3"></div></div>
+  <div class="t"><div class="sk sk1"></div><div class="sk sk2"></div><div class="sk sk3"></div></div>
+  <div class="t"><div class="sk sk1"></div><div class="sk sk2"></div><div class="sk sk3"></div></div>
+  <div class="t"><div class="sk sk1"></div><div class="sk sk2"></div><div class="sk sk3"></div></div>
+</div>
+<div id="T" class="tiles" style="display:none">
+  <div class="tile blue"><div class="label">Active Projects</div><div class="num" id="n1">-</div><div class="mlabel">Active Projects</div><div class="sub">To Do &middot; In Progress &middot; Review</div></div>
+  <div class="tile amber"><div class="label">Shoots This Week</div><div class="num" id="n2">-</div><div class="mlabel">Shoots This Week</div><div class="sub">Next 7 days</div></div>
+  <div class="tile red"><div class="label">Gear Out</div><div class="num" id="n3">-</div><div class="mlabel">Gear Out</div><div class="sub">Currently checked out</div></div>
+  <div class="tile purple"><div class="label">Due This Week</div><div class="num" id="n4">-</div><div class="mlabel">Due This Week</div><div class="sub">Deadlines next 7 days</div></div>
+</div>
+<div id="U" class="upd" onclick="go()"></div>
+<div id="E" class="err" style="display:none">Could not load data &mdash; <span style="cursor:pointer;color:var(--blue)" onclick="go()">retry</span></div>
+<script>
+function go() {
+  document.getElementById('L').style.display = 'grid';
+  document.getElementById('T').style.display = 'none';
+  document.getElementById('E').style.display = 'none';
+  document.getElementById('U').style.display = 'none';
+  fetch('/api/counts')
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      document.getElementById('n1').textContent = d.activeProjects;
+      document.getElementById('n2').textContent = d.shootsThisWeek;
+      document.getElementById('n3').textContent = d.gearOut;
+      document.getElementById('n4').textContent = d.dueThisWeek;
+      document.getElementById('L').style.display = 'none';
+      document.getElementById('T').style.display = 'grid';
+      var t = new Date().toLocaleTimeString('en-US', {hour:'numeric',minute:'2-digit'});
+      var u = document.getElementById('U');
+      u.textContent = 'Updated ' + t + ' \u00b7 Click to refresh';
+      u.style.display = 'block';
+      window.parent.postMessage({type:'resize',height:document.body.scrollHeight}, '*');
+    })
+    .catch(function() {
+      document.getElementById('L').style.display = 'none';
+      document.getElementById('E').style.display = 'block';
+    });
+}
+go();
+window.addEventListener('resize', function() {
+  window.parent.postMessage({type:'resize',height:document.body.scrollHeight}, '*');
+});
+</script>
+</body>
+</html>

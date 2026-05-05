@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New Project — ID43 Creative</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --transition: 0.15s ease;
+}
+
+:root, [data-theme="light"] {
+  --bg: #ffffff;
+  --bg2: #f7f6f3;
+  --bg3: #efeeeb;
+  --bg4: #e3e2df;
+  --border: rgba(55,53,47,0.09);
+  --border2: rgba(55,53,47,0.18);
+  --text: #37352f;
+  --text2: #6b6a68;
+  --text3: #9b9a97;
+  --accent: #0b6fcc;
+  --accent-bg: #e8f0fb;
+  --green: #0f7b6c;
+  --green-bg: #e9f5f3;
+  --red: #c4372e;
+  --page-bg: #f7f6f3;
+  --shadow: 0 2px 8px rgba(0,0,0,0.08), 0 0 0 1px rgba(55,53,47,0.06);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.12), 0 0 0 1px rgba(55,53,47,0.06);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #2f2f2f;
+    --bg2: #252525;
+    --bg3: #1e1e1e;
+    --bg4: #373737;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.13);
+    --text: #e8e6e1;
+    --text2: #9b9890;
+    --text3: #6b6866;
+    --accent: #5b9bd5;
+    --accent-bg: rgba(91,155,213,0.14);
+    --green: #4dac95;
+    --green-bg: rgba(77,172,149,0.14);
+    --red: #e06c6c;
+    --page-bg: #191919;
+    --shadow: 0 2px 8px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.04);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
+  }
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  background: var(--page-bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 20px 80px;
+}
+
+@media (max-width: 600px) {
+  body { padding: 20px 16px 60px; align-items: flex-start; }
+}
+
+.card {
+  background: var(--bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 520px;
+  padding: 36px 36px 32px;
+  position: relative;
+}
+
+@media (max-width: 600px) {
+  .card { padding: 28px 20px 24px; border-radius: var(--radius); }
+}
+
+/* HEADER */
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.card-title { font-size: 17px; font-weight: 600; color: var(--text); letter-spacing: -0.2px; }
+.card-sub { font-size: 13px; color: var(--text3); margin-top: 2px; }
+
+.close-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text3);
+  font-size: 18px;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.close-btn:hover { background: var(--bg3); color: var(--text2); }
+
+/* PROGRESS */
+.progress-bar {
+  height: 2px;
+  background: var(--bg3);
+  border-radius: 2px;
+  margin-bottom: 28px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.35s cubic-bezier(0.4,0,0.2,1), background 0.3s;
+}
+
+/* STEP INDICATOR */
+.step-indicator {
+  font-size: 12px;
+  color: var(--text3);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  letter-spacing: 0.01em;
+}
+
+.step-indicator::before {
+  content: '';
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+/* SCREENS */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* TYPOGRAPHY */
+.step-heading {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+  letter-spacing: -0.4px;
+}
+
+.step-sub {
+  font-size: 14px;
+  color: var(--text2);
+  margin-bottom: 24px;
+}
+
+/* FIELDS */
+.field { margin-bottom: 18px; }
+
+.field-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text2);
+  margin-bottom: 7px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.req { color: var(--red); font-size: 11px; }
+
+.field-input {
+  width: 100%;
+  padding: 9px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  font-family: var(--font);
+  font-size: 15px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  -webkit-appearance: none;
+}
+
+.field-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-bg);
+}
+
+.field-input::placeholder { color: var(--text3); }
+
+/* TYPE GRID */
+.type-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 9px;
+}
+
+.type-opt {
+  padding: 12px 14px;
+  background: var(--bg);
+  border: 1.5px solid var(--border2);
+  border-radius: var(--radius);
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text2);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.type-opt:hover { background: var(--bg2); color: var(--text); border-color: var(--border2); }
+
+.type-opt.selected {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.type-icon { font-size: 16px; }
+
+/* TOGGLE */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle-label { font-size: 14px; font-weight: 500; color: var(--text); }
+.toggle-sublabel { font-size: 12px; color: var(--text3); margin-top: 2px; }
+
+.toggle {
+  width: 36px;
+  height: 21px;
+  border-radius: 11px;
+  background: var(--bg4);
+  position: relative;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+
+.toggle.on { background: var(--accent); }
+
+.toggle-knob {
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: white;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.15s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.toggle.on .toggle-knob { transform: translateX(15px); }
+
+/* ASSIGNEES */
+.assignee-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.assignee-chip {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 13px 7px 8px;
+  background: var(--bg2);
+  border: 1.5px solid var(--border2);
+  border-radius: 20px;
+  font-size: 14px;
+  color: var(--text2);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: var(--font);
+}
+
+.assignee-chip:hover { background: var(--bg3); color: var(--text); }
+
+.assignee-chip.selected {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.av {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 600;
+  flex-shrink: 0;
+  color: white;
+}
+
+/* SUMMARY */
+.summary-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+
+.summary-row:last-child { border-bottom: none; }
+.summary-key { color: var(--text2); }
+.summary-val { color: var(--text); font-weight: 500; max-width: 60%; text-align: right; }
+
+/* BUTTONS */
+.btn-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 24px;
+  align-items: center;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+}
+
+.btn-primary { background: var(--accent); color: white; flex: 1; }
+.btn-primary:hover { opacity: 0.88; }
+.btn-primary:disabled { background: var(--bg4); color: var(--text3); cursor: not-allowed; }
+
+.btn-back {
+  background: transparent;
+  color: var(--text3);
+  padding: 10px 4px;
+  font-size: 14px;
+}
+
+.btn-back:hover { color: var(--text2); }
+
+/* CLIENT DROPDOWN */
+.client-dropdown { position: relative; }
+
+.client-list {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--bg);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  max-height: 220px;
+  overflow-y: auto;
+  z-index: 1000;
+  display: none;
+}
+
+.client-list.open { display: block; }
+
+.client-option {
+  padding: 9px 13px;
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.client-option:hover { background: var(--bg2); }
+
+.client-option.add-new {
+  color: var(--accent);
+  font-weight: 500;
+  border-top: 1px solid var(--border);
+}
+
+/* ERROR TOAST */
+.error-toast {
+  display: none;
+  background: rgba(196,55,46,0.08);
+  border: 1px solid rgba(196,55,46,0.25);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--red);
+  margin-top: 12px;
+}
+
+.error-toast.visible { display: block; }
+
+/* SUCCESS */
+.success-wrap { text-align: center; padding: 8px 0; }
+
+.success-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--green-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.success-title { font-size: 22px; font-weight: 600; color: var(--text); margin-bottom: 8px; letter-spacing: -0.3px; }
+.success-sub { font-size: 15px; color: var(--text2); margin-bottom: 28px; }
+
+.next-actions { display: flex; flex-direction: column; gap: 9px; }
+
+.next-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 13px 16px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 14px;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s;
+  font-family: var(--font);
+  width: 100%;
+  text-align: center;
+}
+
+.next-action:hover { background: var(--bg3); }
+.next-action-icon { font-size: 16px; flex-shrink: 0; }
+
+.next-action-body { text-align: center; }
+.next-action-title { font-weight: 500; }
+.next-action-sub { font-size: 12px; color: var(--text3); margin-top: 2px; }
+
+/* SPINNER */
+.spinner {
+  width: 15px;
+  height: 15px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="card">
+
+  <div class="card-header">
+    <div>
+      <div class="card-title">New Project</div>
+      <div class="card-sub">ID43 Creative</div>
+    </div>
+    <button class="close-btn" onclick="window.close()" title="Close">✕</button>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="progress" style="width:25%"></div></div>
+
+  <!-- STEP 1 -->
+  <div class="screen active" id="s1">
+    <div class="step-indicator">Step 1 of 4 — The basics</div>
+    <div class="step-heading">What's the project?</div>
+    <div class="step-sub">Give it a name and connect it to a client.</div>
+
+    <div class="field">
+      <div class="field-label">Project name <span class="req">*</span></div>
+      <input class="field-input" type="text" id="proj-name" placeholder="e.g. IRONMAN Boise Recap Video" autofocus>
+    </div>
+
+    <div class="field">
+      <div class="field-label">Client <span class="req">*</span></div>
+      <div class="client-dropdown">
+        <input class="field-input" type="text" id="client-input" placeholder="Search or select a client..." autocomplete="off">
+        <input type="hidden" id="client-id">
+        <div class="client-list" id="client-list"></div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="goTo(2)">Next →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2 -->
+  <div class="screen" id="s2">
+    <div class="step-indicator">Step 2 of 4 — Project type</div>
+    <div class="step-heading">What kind of project?</div>
+    <div class="step-sub">This sets the pre-production template.</div>
+
+    <div class="type-grid" id="type-grid">
+      <button class="type-opt" onclick="selectType(this,'Video')"><span class="type-icon">🎬</span>Video</button>
+      <button class="type-opt" onclick="selectType(this,'Photo')"><span class="type-icon">📷</span>Photo</button>
+      <button class="type-opt" onclick="selectType(this,'Graphic')"><span class="type-icon">🎨</span>Graphic</button>
+      <button class="type-opt" onclick="selectType(this,'Podcast')"><span class="type-icon">🎙️</span>Podcast</button>
+      <button class="type-opt" onclick="selectType(this,'Other')" style="grid-column:span 2"><span class="type-icon">📁</span>Other</button>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-back" onclick="goTo(1)">← Back</button>
+      <button class="btn btn-primary" onclick="goTo(3)">Next →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3 -->
+  <div class="screen" id="s3">
+    <div class="step-indicator">Step 3 of 4 — Shoot & team</div>
+    <div class="step-heading">When and who?</div>
+    <div class="step-sub">Set dates and assign team members.</div>
+
+    <div class="toggle-row" onclick="toggleShoot()">
+      <div>
+        <div class="toggle-label">Has a shoot day</div>
+        <div class="toggle-sublabel">Turn on if this project involves a shoot</div>
+      </div>
+      <div class="toggle on" id="shoot-toggle"><div class="toggle-knob"></div></div>
+    </div>
+
+    <div id="shoot-date-field" class="field">
+      <div class="field-label">Shoot date</div>
+      <input class="field-input" type="date" id="shoot-date">
+    </div>
+
+    <div class="field">
+      <div class="field-label">Due date</div>
+      <input class="field-input" type="date" id="due-date">
+    </div>
+
+    <div class="field">
+      <div class="field-label">Assign team</div>
+      <div class="assignee-grid">
+        <button class="assignee-chip" onclick="toggleAssign(this,'Daniel')"><div class="av" style="background:#4a7fa8">D</div>Daniel</button>
+        <button class="assignee-chip" onclick="toggleAssign(this,'Mike')"><div class="av" style="background:#4a8a6a">M</div>Mike</button>
+        <button class="assignee-chip" onclick="toggleAssign(this,'Kyle')"><div class="av" style="background:#a06040">K</div>Kyle</button>
+        <button class="assignee-chip" onclick="toggleAssign(this,'Gavin')"><div class="av" style="background:#7060a8">G</div>Gavin</button>
+        <button class="assignee-chip" onclick="toggleAssign(this,'Joel')"><div class="av" style="background:#a08030">J</div>Joel</button>
+        <button class="assignee-chip" onclick="toggleAssign(this,'Josh')"><div class="av" style="background:#5a8a7a">Jo</div>Josh</button>
+        <button class="assignee-chip" onclick="toggleAssign(this,'Dominic')"><div class="av" style="background:#806080">Do</div>Dominic</button>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-back" onclick="goTo(2)">← Back</button>
+      <button class="btn btn-primary" onclick="goTo(4)">Review →</button>
+    </div>
+  </div>
+
+  <!-- STEP 4 -->
+  <div class="screen" id="s4">
+    <div class="step-indicator">Step 4 of 4 — Review</div>
+    <div class="step-heading">Looks good?</div>
+    <div class="step-sub">Review before creating the project in Notion.</div>
+
+    <div class="summary-card">
+      <div class="summary-row"><span class="summary-key">Project</span><span class="summary-val" id="sum-name">—</span></div>
+      <div class="summary-row"><span class="summary-key">Client</span><span class="summary-val" id="sum-client">—</span></div>
+      <div class="summary-row"><span class="summary-key">Type</span><span class="summary-val" id="sum-type">—</span></div>
+      <div class="summary-row"><span class="summary-key">Shoot date</span><span class="summary-val" id="sum-shoot">No shoot</span></div>
+      <div class="summary-row"><span class="summary-key">Due date</span><span class="summary-val" id="sum-due">Not set</span></div>
+      <div class="summary-row"><span class="summary-key">Assigned to</span><span class="summary-val" id="sum-team">Unassigned</span></div>
+    </div>
+
+    <div id="error-toast" class="error-toast"></div>
+
+    <div class="btn-row">
+      <button class="btn btn-back" onclick="goTo(3)">← Back</button>
+      <button class="btn btn-primary" id="create-btn" onclick="createProject()">Create project</button>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="screen" id="s-success">
+    <div class="success-wrap">
+      <div class="success-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#0f7b6c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="success-title">Project created</div>
+      <div class="success-sub" id="success-sub">Added to your Notion board</div>
+      <div class="next-actions">
+        <button class="next-action" onclick="openNotion()">
+          <div class="next-action-body">
+            <div class="next-action-title">Open in Notion</div>
+            <div class="next-action-sub">Fill out the pre-production doc</div>
+          </div>
+        </button>
+        <button class="next-action" onclick="resetForm()">
+          <div class="next-action-body">
+            <div class="next-action-title">Create another project</div>
+            <div class="next-action-sub">Start fresh</div>
+          </div>
+        </button>
+        <button class="next-action" onclick="window.close()">
+          <div class="next-action-body">
+            <div class="next-action-title">Done</div>
+            <div class="next-action-sub">Close this tab</div>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let CLIENTS = [];
+
+async function loadClients() {
+  try {
+    const res = await fetch('/api/clients');
+    const data = await res.json();
+    CLIENTS = data.clients || [];
+  } catch (err) {
+    console.error('Failed to load clients:', err);
+  }
+}
+
+loadClients();
+
+let state = {
+  name: '', clientName: '', clientId: '',
+  type: '', hasShoot: true,
+  shootDate: '', dueDate: '',
+  assignees: [], createdPageUrl: ''
+};
+
+const clientInput = document.getElementById('client-input');
+const clientList = document.getElementById('client-list');
+
+clientInput.addEventListener('focus', () => renderClientList(clientInput.value));
+clientInput.addEventListener('input', () => renderClientList(clientInput.value));
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('.client-dropdown')) clientList.classList.remove('open');
+});
+
+function renderClientList(query) {
+  const q = (query || '').toLowerCase();
+  const filtered = CLIENTS.filter(c => c.name.toLowerCase().includes(q));
+  clientList.innerHTML = filtered.map(c =>
+    `<div class="client-option" onclick="selectClient('${c.name}','${c.id}')">${c.name}</div>`
+  ).join('') + `<div class="client-option add-new" onclick="addNewClient()">+ Add new client</div>`;
+  clientList.classList.add('open');
+}
+
+function selectClient(name, id) {
+  clientInput.value = name;
+  document.getElementById('client-id').value = id;
+  state.clientName = name;
+  state.clientId = id;
+  clientList.classList.remove('open');
+}
+
+function addNewClient() {
+  const name = prompt('New client name:');
+  if (name && name.trim()) {
+    state.clientName = name.trim();
+    state.clientId = '';
+    clientInput.value = name.trim();
+    clientList.classList.remove('open');
+  }
+}
+
+function selectType(el, type) {
+  document.querySelectorAll('#type-grid .type-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  state.type = type;
+}
+
+function toggleShoot() {
+  state.hasShoot = !state.hasShoot;
+  document.getElementById('shoot-toggle').classList.toggle('on', state.hasShoot);
+  document.getElementById('shoot-date-field').style.display = state.hasShoot ? 'block' : 'none';
+}
+
+function toggleAssign(el, name) {
+  el.classList.toggle('selected');
+  if (el.classList.contains('selected')) {
+    if (!state.assignees.includes(name)) state.assignees.push(name);
+  } else {
+    state.assignees = state.assignees.filter(a => a !== name);
+  }
+}
+
+function goTo(step) {
+  if (step === 2) {
+    state.name = document.getElementById('proj-name').value.trim();
+    state.clientName = clientInput.value.trim();
+    if (!state.name) { document.getElementById('proj-name').focus(); return; }
+    if (!state.clientName) { clientInput.focus(); return; }
+  }
+  if (step === 3 && !state.type) return;
+  if (step === 4) {
+    state.shootDate = document.getElementById('shoot-date').value;
+    state.dueDate = document.getElementById('due-date').value;
+    document.getElementById('sum-name').textContent = state.name;
+    document.getElementById('sum-client').textContent = state.clientName;
+    document.getElementById('sum-type').textContent = state.type;
+    document.getElementById('sum-shoot').textContent = state.hasShoot && state.shootDate
+      ? new Date(state.shootDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+      : 'No shoot';
+    document.getElementById('sum-due').textContent = state.dueDate
+      ? new Date(state.dueDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+      : 'Not set';
+    document.getElementById('sum-team').textContent = state.assignees.length > 0 ? state.assignees.join(', ') : 'Unassigned';
+  }
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('s' + step).classList.add('active');
+  document.getElementById('progress').style.width = ((step / 4) * 100) + '%';
+  window.scrollTo(0, 0);
+}
+
+async function createProject() {
+  const btn = document.getElementById('create-btn');
+  const errorToast = document.getElementById('error-toast');
+  errorToast.classList.remove('visible');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Creating...';
+
+  try {
+    const res = await fetch('/api/create-project', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: state.name,
+        clientName: state.clientName,
+        clientId: state.clientId,
+        type: state.type,
+        hasShoot: state.hasShoot,
+        shootDate: state.shootDate,
+        dueDate: state.dueDate,
+        assignees: state.assignees
+      })
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Something went wrong');
+
+    state.createdPageUrl = data.url;
+    document.getElementById('success-sub').textContent = `"${state.name}" added to your Notion board`;
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('s-success').classList.add('active');
+    document.getElementById('progress').style.width = '100%';
+    document.getElementById('progress').style.background = 'var(--green)';
+
+  } catch (err) {
+    btn.disabled = false;
+    btn.innerHTML = 'Create project';
+    errorToast.textContent = err.message || 'Could not create project. Please try again.';
+    errorToast.classList.add('visible');
+  }
+}
+
+function openNotion() {
+  if (state.createdPageUrl) window.open(state.createdPageUrl, '_blank');
+}
+
+function resetForm() {
+  state = { name: '', clientName: '', clientId: '', type: '', hasShoot: true, shootDate: '', dueDate: '', assignees: [], createdPageUrl: '' };
+  document.getElementById('proj-name').value = '';
+  clientInput.value = '';
+  document.getElementById('client-id').value = '';
+  document.getElementById('shoot-date').value = '';
+  document.getElementById('due-date').value = '';
+  document.getElementById('shoot-toggle').classList.add('on');
+  document.getElementById('shoot-date-field').style.display = 'block';
+  document.getElementById('error-toast').classList.remove('visible');
+  document.getElementById('progress').style.width = '25%';
+  document.getElementById('progress').style.background = '';
+  document.querySelectorAll('.type-opt').forEach(o => o.classList.remove('selected'));
+  document.querySelectorAll('.assignee-chip').forEach(o => o.classList.remove('selected'));
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('s1').classList.add('active');
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
