@@ -7,14 +7,39 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg0:#191919;--bg2:#252525;--bg3:#2e2e2e;--border:rgba(255,255,255,0.07);--text:#e8e6e1;--text3:#5a5855;--blue:#5b9bd5;--amber:#d4920e;--red:#c05a5a;--purple:#8b7fd4}
-html,body{background:#191919;font-family:'Inter',-apple-system,sans-serif;color:var(--text);padding:0;margin:0;-webkit-font-smoothing:antialiased}
+:root{
+  --page-bg:#191919;
+  --bg2:#252525;
+  --bg3:#2e2e2e;
+  --border:rgba(255,255,255,0.07);
+  --text:#e8e6e1;
+  --text3:#5a5855;
+  --label:#c9c7c2;
+  --blue:#5b9bd5;
+  --amber:#d4920e;
+  --red:#c05a5a;
+  --purple:#8b7fd4
+}
+@media(prefers-color-scheme:light){:root{
+  --page-bg:#ffffff;
+  --bg2:#f7f6f3;
+  --bg3:#efeeeb;
+  --border:rgba(55,53,47,0.09);
+  --text:#37352f;
+  --text3:#9b9a97;
+  --label:#37352f;
+  --blue:#0b6fcc;
+  --amber:#c17d10;
+  --red:#c4372e;
+  --purple:#6550b9
+}}
+html,body{background:var(--page-bg);font-family:'Inter',-apple-system,sans-serif;color:var(--text);padding:0;margin:0;-webkit-font-smoothing:antialiased}
 .tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:4px}
 .tile{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px 12px;position:relative;overflow:hidden}
 .tile::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
 .tile.blue::before{background:var(--blue)}.tile.amber::before{background:var(--amber)}.tile.red::before{background:var(--red)}.tile.purple::before{background:var(--purple)}
 .num{font-size:32px;font-weight:600;letter-spacing:-1.5px;line-height:1;margin-bottom:5px}
-.mlabel{font-size:13px;color:#c9c7c2;font-weight:500}
+.mlabel{font-size:13px;color:var(--label);font-weight:500}
 .tile.blue .num{color:var(--blue)}.tile.amber .num{color:var(--amber)}.tile.red .num{color:var(--red)}.tile.purple .num{color:var(--purple)}
 .ts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:4px}
 .t{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;height:75px}
