@@ -81,7 +81,6 @@ export default async function handler(req, res) {
       }),
       queryNotion(PROJECTS_DB, {
         and: [
-          { property: 'Has Shoot', checkbox: { equals: true } },
           { property: 'Shoot Date', date: { on_or_after: todayStr } },
           { property: 'Shoot Date', date: { on_or_before: weekEndStr } },
         ]
