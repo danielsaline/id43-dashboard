@@ -42,8 +42,7 @@ export default async function handler(req, res) {
 
     const shootsThisWeek = projects.filter(p => {
       const s = p.properties?.['Shoot Date']?.date?.start;
-      const h = p.properties?.['Has Shoot']?.checkbox;
-      if (!s || !h) return false;
+      if (!s) return false;
       const d = new Date(s);
       d.setHours(0, 0, 0, 0);
       return d >= today && d <= weekEnd;
