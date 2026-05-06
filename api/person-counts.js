@@ -28,17 +28,12 @@ async function queryNotion(databaseId, filter) {
   return data.results || [];
 }
 
-// Check if any assigned user's name matches the target (case-insensitive)
 function assignedTo(page, personName) {
   const people = page.properties['Assigned to']?.people || [];
   const firstName = personName.split(' ')[0];
-  return people.some(p => {
-    const full = (p.name || '').toLowerCase();
-    return full.includes(firstName);
-  });
+  return people.some(p => (p.name || '').toLowerCase().includes(firstName));
 }
 
-// Check if gear Person field contains the first name
 function gearAssignedTo(page, firstName) {
   const text = page.properties['Person']?.rich_text?.[0]?.plain_text || '';
   return text.toLowerCase().includes(firstName);
@@ -60,43 +55,45 @@ export default async function handler(req, res) {
   const firstName = personName.split(' ')[0];
 
   try {
+    // Normalize to midnight so date-only values aren't excluded by time-of-day
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // End of this Sunday — matches Notion's "this week" definition
+    const weekEnd = new Date(today);
+    weekEnd.setDate(today.getDate() + (7 - today.getDay()));
+    weekEnd.setHours(23, 59, 59, 999);
+
+    // Rolling 7 days for due this week
+    const dueEnd = new Date(today);
+    dueEnd.setDate(today.getDate() + 7);
+    dueEnd.setHours(23, 59, 59, 999);
+
     const todayStr = today.toISOString().split('T')[0];
-
-    const endOfWeek = new Date(today);
-    endOfWeek.setDate(today.getDate() + (7 - today.getDay()));
-    const endOfWeekStr = endOfWeek.toISOString().split('T')[0];
-
-    const weekOutStr = new Date(today.getTime() + 7 * 86400000).toISOString().split('T')[0];
+    const weekEndStr = weekEnd.toISOString().split('T')[0];
+    const dueEndStr = dueEnd.toISOString().split('T')[0];
 
     const activeStatuses = ['In Progress', 'To Do', 'Review'];
 
     const [allActive, allShoots, allGear, allDue] = await Promise.all([
-      // Active projects — filter by status only, then filter by person client-side
       queryNotion(PROJECTS_DB, {
         or: activeStatuses.map(s => ({ property: 'Status', select: { equals: s } }))
       }),
-
-      // Shoots this week — filter by date + has shoot server-side
       queryNotion(PROJECTS_DB, {
         and: [
           { property: 'Has Shoot', checkbox: { equals: true } },
           { property: 'Shoot Date', date: { on_or_after: todayStr } },
-          { property: 'Shoot Date', date: { on_or_before: endOfWeekStr } },
+          { property: 'Shoot Date', date: { on_or_before: weekEndStr } },
         ]
       }),
-
-      // All checked-out gear
       queryNotion(GEAR_DB, {
         property: 'Status', select: { equals: 'Checked Out' }
       }),
-
-      // Due this week — filter by date + status server-side
       queryNotion(PROJECTS_DB, {
         and: [
           { or: activeStatuses.map(s => ({ property: 'Status', select: { equals: s } })) },
           { property: 'Due Date', date: { on_or_after: todayStr } },
-          { property: 'Due Date', date: { on_or_before: weekOutStr } },
+          { property: 'Due Date', date: { on_or_before: dueEndStr } },
         ]
       }),
     ]);
