@@ -89,7 +89,6 @@ body {
   .card { padding: 28px 20px 24px; border-radius: var(--radius); }
 }
 
-/* HEADER */
 .card-header {
   display: flex;
   align-items: center;
@@ -118,7 +117,6 @@ body {
 
 .close-btn:hover { background: var(--bg3); color: var(--text2); }
 
-/* PROGRESS */
 .progress-bar {
   height: 2px;
   background: var(--bg3);
@@ -134,7 +132,6 @@ body {
   transition: width 0.35s cubic-bezier(0.4,0,0.2,1), background 0.3s;
 }
 
-/* STEP INDICATOR */
 .step-indicator {
   font-size: 12px;
   color: var(--text3);
@@ -154,11 +151,9 @@ body {
   flex-shrink: 0;
 }
 
-/* SCREENS */
 .screen { display: none; }
 .screen.active { display: block; }
 
-/* TYPOGRAPHY */
 .step-heading {
   font-size: 22px;
   font-weight: 600;
@@ -173,7 +168,6 @@ body {
   margin-bottom: 24px;
 }
 
-/* FIELDS */
 .field { margin-bottom: 18px; }
 
 .field-label {
@@ -209,7 +203,6 @@ body {
 
 .field-input::placeholder { color: var(--text3); }
 
-/* TYPE GRID */
 .type-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -243,7 +236,6 @@ body {
 
 .type-icon { font-size: 16px; }
 
-/* TOGGLE */
 .toggle-row {
   display: flex;
   align-items: center;
@@ -286,7 +278,6 @@ body {
 
 .toggle.on .toggle-knob { transform: translateX(15px); }
 
-/* ASSIGNEES */
 .assignee-grid {
   display: flex;
   flex-wrap: wrap;
@@ -329,7 +320,6 @@ body {
   color: white;
 }
 
-/* SUMMARY */
 .summary-card {
   background: var(--bg2);
   border: 1px solid var(--border);
@@ -351,7 +341,6 @@ body {
 .summary-key { color: var(--text2); }
 .summary-val { color: var(--text); font-weight: 500; max-width: 60%; text-align: right; }
 
-/* BUTTONS */
 .btn-row {
   display: flex;
   gap: 8px;
@@ -387,7 +376,6 @@ body {
 
 .btn-back:hover { color: var(--text2); }
 
-/* CLIENT DROPDOWN */
 .client-dropdown { position: relative; }
 
 .client-list {
@@ -423,7 +411,6 @@ body {
   border-top: 1px solid var(--border);
 }
 
-/* ERROR TOAST */
 .error-toast {
   display: none;
   background: rgba(196,55,46,0.08);
@@ -437,7 +424,6 @@ body {
 
 .error-toast.visible { display: block; }
 
-/* SUCCESS */
 .success-wrap { text-align: center; padding: 8px 0; }
 
 .success-icon {
@@ -481,7 +467,6 @@ body {
 .next-action-title { font-weight: 500; }
 .next-action-sub { font-size: 12px; color: var(--text3); margin-top: 2px; }
 
-/* SPINNER */
 .spinner {
   width: 15px;
   height: 15px;
@@ -578,15 +563,7 @@ body {
 
     <div class="field">
       <div class="field-label">Assign team</div>
-      <div class="assignee-grid">
-        <button class="assignee-chip" onclick="toggleAssign(this,'Daniel')"><div class="av" style="background:#4a7fa8">D</div>Daniel</button>
-        <button class="assignee-chip" onclick="toggleAssign(this,'Mike')"><div class="av" style="background:#4a8a6a">M</div>Mike</button>
-        <button class="assignee-chip" onclick="toggleAssign(this,'Kyle')"><div class="av" style="background:#a06040">K</div>Kyle</button>
-        <button class="assignee-chip" onclick="toggleAssign(this,'Gavin')"><div class="av" style="background:#7060a8">G</div>Gavin</button>
-        <button class="assignee-chip" onclick="toggleAssign(this,'Joel')"><div class="av" style="background:#a08030">J</div>Joel</button>
-        <button class="assignee-chip" onclick="toggleAssign(this,'Josh')"><div class="av" style="background:#5a8a7a">Jo</div>Josh</button>
-        <button class="assignee-chip" onclick="toggleAssign(this,'Dominic')"><div class="av" style="background:#806080">Do</div>Dominic</button>
-      </div>
+      <div class="assignee-grid" id="assignee-grid"></div>
     </div>
 
     <div class="btn-row">
@@ -652,6 +629,30 @@ body {
 </div>
 
 <script>
+// Team members with Notion user IDs.
+// Add notionId for Kyle, Mike, Josh, Dominic once they join Notion.
+const TEAM_MEMBERS = [
+  { name: 'Daniel',  initials: 'D',  color: '#4a7fa8', notionId: '47e8ca8f-9729-4208-a6a9-484564e9b077' },
+  { name: 'Gavin',   initials: 'G',  color: '#7060a8', notionId: '229d872b-594c-812d-9b82-00021bbcf61c' },
+  { name: 'Joel',    initials: 'J',  color: '#a08030', notionId: '37247952-f736-473b-adc9-44436d660369' },
+  // { name: 'Kyle',    initials: 'K',  color: '#a06040', notionId: null },
+  // { name: 'Mike',    initials: 'M',  color: '#4a8a6a', notionId: null },
+  // { name: 'Josh',    initials: 'Jo', color: '#5a8a7a', notionId: null },
+  // { name: 'Dominic', initials: 'Do', color: '#806080', notionId: null },
+];
+
+// Render assignee chips from TEAM_MEMBERS
+function renderAssigneeGrid() {
+  const grid = document.getElementById('assignee-grid');
+  grid.innerHTML = TEAM_MEMBERS.map(m => `
+    <button class="assignee-chip" onclick="toggleAssign(this,'${m.name}')">
+      <div class="av" style="background:${m.color}">${m.initials}</div>${m.name}
+    </button>
+  `).join('');
+}
+
+renderAssigneeGrid();
+
 let CLIENTS = [];
 
 async function loadClients() {
@@ -766,6 +767,11 @@ async function createProject() {
   btn.disabled = true;
   btn.innerHTML = '<div class="spinner"></div> Creating...';
 
+  // Map selected names to Notion user IDs
+  const assignedTo = state.assignees
+    .map(name => TEAM_MEMBERS.find(m => m.name === name)?.notionId)
+    .filter(Boolean);
+
   try {
     const res = await fetch('/api/create-project', {
       method: 'POST',
@@ -778,7 +784,7 @@ async function createProject() {
         hasShoot: state.hasShoot,
         shootDate: state.shootDate,
         dueDate: state.dueDate,
-        assignees: state.assignees
+        assignedTo
       })
     });
 
