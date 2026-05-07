@@ -1,37 +1,39 @@
-const { Client } = require('@notionhq/client');
-
-const notion = new Client({ auth: process.env.NOTION_TOKEN });
-const DB_ID = '2e1f4206-910f-41b3-a4c0-deb2ede4a451';
-
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
+  const NOTION_TOKEN = process.env.NOTION_TOKEN;
+  const INVOICES_DB = '2e1f4206910f41b3a4c0deb2ede4a451';
 
   try {
-    const totals = { pending: { sum: 0, count: 0 }, sent: { sum: 0, count: 0 }, paid: { sum: 0, count: 0 } };
-    let cursor;
+    const iRes = await fetch(`https://api.notion.com/v1/databases/${INVOICES_DB}/query`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${NOTION_TOKEN}`,
+        'Notion-Version': '2022-06-28',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ page_size: 100 })
+    });
 
-    do {
-      const resp = await notion.databases.query({
-        database_id: DB_ID,
-        start_cursor: cursor,
-        page_size: 100
-      });
+    const iData = await iRes.json();
+    const invoices = iData.results || [];
 
-      for (const page of resp.results) {
-        const status = (page.properties.Status?.select?.name || '').toLowerCase();
-        const amount = page.properties.Amount?.number || 0;
-        if (totals[status] !== undefined) {
-          totals[status].sum += amount;
-          totals[status].count += 1;
-        }
+    const totals = {
+      pending: { sum: 0, count: 0 },
+      sent:    { sum: 0, count: 0 },
+      paid:    { sum: 0, count: 0 }
+    };
+
+    for (const page of invoices) {
+      const status = (page.properties?.Status?.select?.name || '').toLowerCase();
+      const amount = page.properties?.Amount?.number || 0;
+      if (totals[status] !== undefined) {
+        totals[status].sum   += amount;
+        totals[status].count += 1;
       }
+    }
 
-      cursor = resp.has_more ? resp.next_cursor : undefined;
-    } while (cursor);
-
-    res.json(totals);
-  } catch (e) {
-    res.status(500).json({ error: e.message });
+    res.status(200).json(totals);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-};
+}
