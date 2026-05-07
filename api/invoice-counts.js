@@ -1,7 +1,7 @@
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   const NOTION_TOKEN = process.env.NOTION_TOKEN;
-  const INVOICES_DB = '2e1f4206910f41b3a4c0deb2ede4a451';
+  const INVOICES_DB = '865b0687ea1c40dba699da6a11a59b3e';
   try {
     const iRes = await fetch(`https://api.notion.com/v1/databases/${INVOICES_DB}/query`, {
       method: 'POST',
