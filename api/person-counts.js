@@ -55,13 +55,18 @@ export default async function handler(req, res) {
   const firstName = personName.split(' ')[0];
 
   try {
-    // Normalize to midnight so date-only values aren't excluded by time-of-day
+    // Normalize to midnight
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // End of this Sunday — matches Notion's "this week" definition
-    const weekEnd = new Date(today);
-    weekEnd.setDate(today.getDate() + (7 - today.getDay()));
+    // Start of this week (Sunday) — matches Notion's full week view
+    const weekStart = new Date(today);
+    weekStart.setDate(today.getDate() - today.getDay());
+    weekStart.setHours(0, 0, 0, 0);
+
+    // End of this Saturday
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6);
     weekEnd.setHours(23, 59, 59, 999);
 
     // Rolling 7 days for due this week
@@ -69,8 +74,9 @@ export default async function handler(req, res) {
     dueEnd.setDate(today.getDate() + 7);
     dueEnd.setHours(23, 59, 59, 999);
 
-    const todayStr = today.toISOString().split('T')[0];
+    const weekStartStr = weekStart.toISOString().split('T')[0];
     const weekEndStr = weekEnd.toISOString().split('T')[0];
+    const todayStr = today.toISOString().split('T')[0];
     const dueEndStr = dueEnd.toISOString().split('T')[0];
 
     const activeStatuses = ['In Progress', 'To Do', 'Review'];
@@ -81,7 +87,7 @@ export default async function handler(req, res) {
       }),
       queryNotion(PROJECTS_DB, {
         and: [
-          { property: 'Shoot Date', date: { on_or_after: todayStr } },
+          { property: 'Shoot Date', date: { on_or_after: weekStartStr } },
           { property: 'Shoot Date', date: { on_or_before: weekEndStr } },
         ]
       }),
