@@ -20,16 +20,21 @@ export default async function handler(req, res) {
     const projects = pData.results || [];
     const gear = gData.results || [];
 
-    // Normalize to start of today (midnight) so date-only shoot dates aren't excluded
+    // Normalize to start of today (midnight)
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // End of this Sunday (end of current week, matching Notion's week filter)
-    const weekEnd = new Date(today);
-    weekEnd.setDate(today.getDate() + (7 - today.getDay()));
+    // Start of this week (Sunday) — so tile matches Notion's full Mon-Sun week view
+    const weekStart = new Date(today);
+    weekStart.setDate(today.getDate() - today.getDay());
+    weekStart.setHours(0, 0, 0, 0);
+
+    // End of this Saturday
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6);
     weekEnd.setHours(23, 59, 59, 999);
 
-    // Rolling 7 days for due this week (unchanged behavior)
+    // Rolling 7 days for due this week
     const dueEnd = new Date(today);
     dueEnd.setDate(today.getDate() + 7);
     dueEnd.setHours(23, 59, 59, 999);
@@ -45,7 +50,7 @@ export default async function handler(req, res) {
       if (!s) return false;
       const d = new Date(s);
       d.setHours(0, 0, 0, 0);
-      return d >= today && d <= weekEnd;
+      return d >= weekStart && d <= weekEnd;
     }).length;
 
     const gearOut = gear.filter(g =>
