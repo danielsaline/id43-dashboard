@@ -3,7 +3,7 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
   const NOTION_TOKEN = process.env.NOTION_TOKEN;
   const PROJECTS_DB = '355b41f95ed680c7a1e2ec00430dd822';
-  const { name, clientId, type, hasShoot, shootDate, dueDate } = req.body;
+  const { name, clientId, type, hasShoot, shootDate, dueDate, assignedTo } = req.body;
   if (!name || !type) return res.status(400).json({ error: 'Missing required fields' });
   try {
     const properties = {
@@ -15,6 +15,11 @@ export default async function handler(req, res) {
     if (clientId) properties['Client'] = { relation: [{ id: clientId }] };
     if (shootDate && hasShoot) properties['Shoot Date'] = { date: { start: shootDate } };
     if (dueDate) properties['Due Date'] = { date: { start: dueDate } };
+    if (assignedTo && assignedTo.length > 0) {
+      properties['Assigned to'] = {
+        people: assignedTo.map(id => ({ object: 'user', id }))
+      };
+    }
     const response = await fetch('https://api.notion.com/v1/pages', {
       method: 'POST',
       headers: { 'Authorization': `Bearer ${NOTION_TOKEN}`, 'Notion-Version': '2022-06-28', 'Content-Type': 'application/json' },
