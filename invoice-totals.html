@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ID43 Invoice Totals</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --page-bg:#191919;
+  --bg2:#252525;
+  --bg3:#2e2e2e;
+  --border:rgba(255,255,255,0.07);
+  --text:#e8e6e1;
+  --text3:#5a5855;
+  --label:#c9c7c2;
+  --amber:#d4920e;
+  --blue:#5b9bd5;
+  --green:#3d9e6b
+}
+@media(prefers-color-scheme:light){:root{
+  --page-bg:#ffffff;
+  --bg2:#f7f6f3;
+  --bg3:#efeeeb;
+  --border:rgba(55,53,47,0.09);
+  --text:#37352f;
+  --text3:#9b9a97;
+  --label:#37352f;
+  --amber:#c17d10;
+  --blue:#0b6fcc;
+  --green:#0f7f4e
+}}
+html,body{background:var(--page-bg);font-family:'Inter',-apple-system,sans-serif;color:var(--text);padding:0;margin:0;-webkit-font-smoothing:antialiased}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:4px}
+.tile{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px 12px;position:relative;overflow:hidden}
+.tile::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.tile.amber::before{background:var(--amber)}
+.tile.blue::before{background:var(--blue)}
+.tile.green::before{background:var(--green)}
+.num{font-size:26px;font-weight:600;letter-spacing:-1px;line-height:1;margin-bottom:5px}
+.mlabel{font-size:13px;color:var(--label);font-weight:500}
+.sub{font-size:11px;color:var(--text3);margin-top:3px}
+.tile.amber .num{color:var(--amber)}
+.tile.blue .num{color:var(--blue)}
+.tile.green .num{color:var(--green)}
+.ts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:4px}
+.t{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;height:80px}
+.sk{background:linear-gradient(90deg,var(--bg3) 25%,var(--bg2) 50%,var(--bg3) 75%);background-size:200% 100%;animation:sh 1.2s infinite;border-radius:4px}
+@keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.sk1{height:8px;width:55%;margin-bottom:10px}.sk2{height:28px;width:45%;margin-bottom:6px}.sk3{height:8px;width:40%}
+.upd{text-align:right;font-size:10px;color:var(--text3);padding:5px 4px 0;cursor:pointer}
+.upd:hover{color:#9b9890}
+.err{text-align:center;padding:16px;font-size:12px;color:var(--text3)}
+</style>
+</head>
+<body>
+<div id="L" class="ts">
+  <div class="t"><div class="sk sk1"></div><div class="sk sk2"></div><div class="sk sk3"></div></div>
+  <div class="t"><div class="sk sk1"></div><div class="sk sk2"></div><div class="sk sk3"></div></div>
+  <div class="t"><div class="sk sk1"></div><div class="sk sk2"></div><div class="sk sk3"></div></div>
+</div>
+<div id="T" class="tiles" style="display:none">
+  <div class="tile amber">
+    <div class="num" id="n1">-</div>
+    <div class="mlabel">Pending</div>
+    <div class="sub" id="s1"></div>
+  </div>
+  <div class="tile blue">
+    <div class="num" id="n2">-</div>
+    <div class="mlabel">Sent</div>
+    <div class="sub" id="s2"></div>
+  </div>
+  <div class="tile green">
+    <div class="num" id="n3">-</div>
+    <div class="mlabel">Paid</div>
+    <div class="sub" id="s3"></div>
+  </div>
+</div>
+<div id="U" class="upd" onclick="go()"></div>
+<div id="E" class="err" style="display:none">Could not load data &mdash; <span style="cursor:pointer;color:var(--blue)" onclick="go()">retry</span></div>
+<script>
+function fmt(n){
+  return new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0}).format(n);
+}
+
+async function fetchTotals() {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      system: 'You query Notion and return ONLY a valid JSON object. No markdown, no explanation, no backticks. Just raw JSON.',
+      messages: [{
+        role: 'user',
+        content: 'Query the Notion database with ID 2e1f4206-910f-41b3-a4c0-deb2ede4a451. For each Status value (Pending, Sent, Paid), calculate the sum of the Amount field and count of pages. Return ONLY this JSON structure with no other text: {"pending":{"sum":0,"count":0},"sent":{"sum":0,"count":0},"paid":{"sum":0,"count":0}}'
+      }],
+      mcp_servers: [{type:'url',url:'https://mcp.notion.com/mcp',name:'notion-mcp'}]
+    })
+  });
+  const data = await res.json();
+  const text = data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+  return JSON.parse(text.trim());
+}
+
+function go() {
+  document.getElementById('L').style.display = 'grid';
+  document.getElementById('T').style.display = 'none';
+  document.getElementById('E').style.display = 'none';
+  document.getElementById('U').style.display = 'none';
+
+  fetchTotals().then(function(d) {
+    document.getElementById('n1').textContent = fmt(d.pending.sum);
+    document.getElementById('s1').textContent = d.pending.count + ' invoice' + (d.pending.count !== 1 ? 's' : '');
+    document.getElementById('n2').textContent = fmt(d.sent.sum);
+    document.getElementById('s2').textContent = d.sent.count + ' invoice' + (d.sent.count !== 1 ? 's' : '');
+    document.getElementById('n3').textContent = fmt(d.paid.sum);
+    document.getElementById('s3').textContent = d.paid.count + ' invoice' + (d.paid.count !== 1 ? 's' : '');
+    document.getElementById('L').style.display = 'none';
+    document.getElementById('T').style.display = 'grid';
+    var t = new Date().toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+    var u = document.getElementById('U');
+    u.textContent = 'Updated ' + t + ' · Click to refresh';
+    u.style.display = 'block';
+    window.parent.postMessage({type:'resize',height:document.body.scrollHeight},'*');
+  }).catch(function() {
+    document.getElementById('L').style.display = 'none';
+    document.getElementById('E').style.display = 'block';
+  });
+}
+
+go();
+window.addEventListener('resize',function(){
+  window.parent.postMessage({type:'resize',height:document.body.scrollHeight},'*');
+});
+</script>
+</body>
+</html>
