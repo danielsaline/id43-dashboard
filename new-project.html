@@ -89,393 +89,115 @@ body {
   .card { padding: 28px 20px 24px; border-radius: var(--radius); }
 }
 
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 28px;
-}
-
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
 .card-title { font-size: 17px; font-weight: 600; color: var(--text); letter-spacing: -0.2px; }
 .card-sub { font-size: 13px; color: var(--text3); margin-top: 2px; }
 
 .close-btn {
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text3);
-  font-size: 18px;
-  transition: background 0.15s, color 0.15s;
-  flex-shrink: 0;
+  width: 28px; height: 28px; border-radius: 6px; background: transparent; border: none;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: var(--text3); font-size: 18px; transition: background 0.15s, color 0.15s; flex-shrink: 0;
 }
-
 .close-btn:hover { background: var(--bg3); color: var(--text2); }
 
-.progress-bar {
-  height: 2px;
-  background: var(--bg3);
-  border-radius: 2px;
-  margin-bottom: 28px;
-  overflow: hidden;
-}
+.progress-bar { height: 2px; background: var(--bg3); border-radius: 2px; margin-bottom: 28px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.35s cubic-bezier(0.4,0,0.2,1), background 0.3s; }
 
-.progress-fill {
-  height: 100%;
-  background: var(--accent);
-  border-radius: 2px;
-  transition: width 0.35s cubic-bezier(0.4,0,0.2,1), background 0.3s;
-}
-
-.step-indicator {
-  font-size: 12px;
-  color: var(--text3);
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  letter-spacing: 0.01em;
-}
-
-.step-indicator::before {
-  content: '';
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--accent);
-  flex-shrink: 0;
-}
+.step-indicator { font-size: 12px; color: var(--text3); margin-bottom: 16px; display: flex; align-items: center; gap: 6px; letter-spacing: 0.01em; }
+.step-indicator::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
 
 .screen { display: none; }
 .screen.active { display: block; }
 
-.step-heading {
-  font-size: 22px;
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 6px;
-  letter-spacing: -0.4px;
-}
-
-.step-sub {
-  font-size: 14px;
-  color: var(--text2);
-  margin-bottom: 24px;
-}
+.step-heading { font-size: 22px; font-weight: 600; color: var(--text); margin-bottom: 6px; letter-spacing: -0.4px; }
+.step-sub { font-size: 14px; color: var(--text2); margin-bottom: 24px; }
 
 .field { margin-bottom: 18px; }
-
-.field-label {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text2);
-  margin-bottom: 7px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
+.field-label { font-size: 13px; font-weight: 500; color: var(--text2); margin-bottom: 7px; display: flex; align-items: center; gap: 4px; }
 .req { color: var(--red); font-size: 11px; }
 
 .field-input {
-  width: 100%;
-  padding: 9px 12px;
-  background: var(--bg);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius);
-  font-family: var(--font);
-  font-size: 15px;
-  color: var(--text);
-  outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
-  -webkit-appearance: none;
+  width: 100%; padding: 9px 12px; background: var(--bg); border: 1px solid var(--border2);
+  border-radius: var(--radius); font-family: var(--font); font-size: 15px; color: var(--text);
+  outline: none; transition: border-color 0.15s, box-shadow 0.15s; -webkit-appearance: none;
 }
-
-.field-input:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px var(--accent-bg);
-}
-
+.field-input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-bg); }
 .field-input::placeholder { color: var(--text3); }
 
-.type-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 9px;
-}
+.type-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 9px; }
 
 .type-opt {
-  padding: 12px 14px;
-  background: var(--bg);
-  border: 1.5px solid var(--border2);
-  border-radius: var(--radius);
-  font-family: var(--font);
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text2);
-  cursor: pointer;
-  text-align: left;
-  transition: all 0.15s;
-  display: flex;
-  align-items: center;
-  gap: 9px;
+  padding: 12px 14px; background: var(--bg); border: 1.5px solid var(--border2);
+  border-radius: var(--radius); font-family: var(--font); font-size: 14px; font-weight: 500;
+  color: var(--text2); cursor: pointer; text-align: left; transition: all 0.15s;
+  display: flex; align-items: center; gap: 9px;
 }
-
-.type-opt:hover { background: var(--bg2); color: var(--text); border-color: var(--border2); }
-
-.type-opt.selected {
-  background: var(--accent-bg);
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
+.type-opt:hover { background: var(--bg2); color: var(--text); }
+.type-opt.selected { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
 .type-icon { font-size: 16px; }
 
 .toggle-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 14px;
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  margin-bottom: 16px;
-  cursor: pointer;
-  user-select: none;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px; background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); margin-bottom: 16px; cursor: pointer; user-select: none;
 }
-
 .toggle-label { font-size: 14px; font-weight: 500; color: var(--text); }
 .toggle-sublabel { font-size: 12px; color: var(--text3); margin-top: 2px; }
 
-.toggle {
-  width: 36px;
-  height: 21px;
-  border-radius: 11px;
-  background: var(--bg4);
-  position: relative;
-  transition: background 0.15s;
-  flex-shrink: 0;
-}
-
+.toggle { width: 36px; height: 21px; border-radius: 11px; background: var(--bg4); position: relative; transition: background 0.15s; flex-shrink: 0; }
 .toggle.on { background: var(--accent); }
-
-.toggle-knob {
-  width: 17px;
-  height: 17px;
-  border-radius: 50%;
-  background: white;
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  transition: transform 0.15s;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-}
-
+.toggle-knob { width: 17px; height: 17px; border-radius: 50%; background: white; position: absolute; top: 2px; left: 2px; transition: transform 0.15s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
 .toggle.on .toggle-knob { transform: translateX(15px); }
 
-.assignee-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
+.assignee-grid { display: flex; flex-wrap: wrap; gap: 8px; }
 
 .assignee-chip {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 7px 13px 7px 8px;
-  background: var(--bg2);
-  border: 1.5px solid var(--border2);
-  border-radius: 20px;
-  font-size: 14px;
-  color: var(--text2);
-  cursor: pointer;
-  transition: all 0.15s;
-  font-family: var(--font);
+  display: flex; align-items: center; gap: 7px; padding: 7px 13px 7px 8px;
+  background: var(--bg2); border: 1.5px solid var(--border2); border-radius: 20px;
+  font-size: 14px; color: var(--text2); cursor: pointer; transition: all 0.15s; font-family: var(--font);
 }
-
 .assignee-chip:hover { background: var(--bg3); color: var(--text); }
+.assignee-chip.selected { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
 
-.assignee-chip.selected {
-  background: var(--accent-bg);
-  border-color: var(--accent);
-  color: var(--accent);
-}
+.av { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; flex-shrink: 0; color: white; }
 
-.av {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  font-weight: 600;
-  flex-shrink: 0;
-  color: white;
-}
-
-.summary-card {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  margin-bottom: 20px;
-}
-
-.summary-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 11px 16px;
-  border-bottom: 1px solid var(--border);
-  font-size: 14px;
-}
-
+.summary-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 20px; }
+.summary-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 16px; border-bottom: 1px solid var(--border); font-size: 14px; }
 .summary-row:last-child { border-bottom: none; }
 .summary-key { color: var(--text2); }
 .summary-val { color: var(--text); font-weight: 500; max-width: 60%; text-align: right; }
 
-.btn-row {
-  display: flex;
-  gap: 8px;
-  margin-top: 24px;
-  align-items: center;
-}
+.btn-row { display: flex; gap: 8px; margin-top: 24px; align-items: center; }
 
-.btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  padding: 10px 20px;
-  border-radius: var(--radius);
-  font-family: var(--font);
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  border: none;
-  transition: all 0.15s;
-}
-
+.btn { display: flex; align-items: center; justify-content: center; gap: 7px; padding: 10px 20px; border-radius: var(--radius); font-family: var(--font); font-size: 14px; font-weight: 500; cursor: pointer; border: none; transition: all 0.15s; }
 .btn-primary { background: var(--accent); color: white; flex: 1; }
 .btn-primary:hover { opacity: 0.88; }
 .btn-primary:disabled { background: var(--bg4); color: var(--text3); cursor: not-allowed; }
-
-.btn-back {
-  background: transparent;
-  color: var(--text3);
-  padding: 10px 4px;
-  font-size: 14px;
-}
-
+.btn-back { background: transparent; color: var(--text3); padding: 10px 4px; font-size: 14px; }
 .btn-back:hover { color: var(--text2); }
 
 .client-dropdown { position: relative; }
-
-.client-list {
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  right: 0;
-  background: var(--bg);
-  border: 1px solid var(--border2);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-lg);
-  max-height: 220px;
-  overflow-y: auto;
-  z-index: 1000;
-  display: none;
-}
-
+.client-list { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--bg); border: 1px solid var(--border2); border-radius: var(--radius); box-shadow: var(--shadow-lg); max-height: 220px; overflow-y: auto; z-index: 1000; display: none; }
 .client-list.open { display: block; }
-
-.client-option {
-  padding: 9px 13px;
-  font-size: 14px;
-  color: var(--text);
-  cursor: pointer;
-  transition: background 0.1s;
-}
-
+.client-option { padding: 9px 13px; font-size: 14px; color: var(--text); cursor: pointer; transition: background 0.1s; }
 .client-option:hover { background: var(--bg2); }
+.client-option.add-new { color: var(--accent); font-weight: 500; border-top: 1px solid var(--border); }
 
-.client-option.add-new {
-  color: var(--accent);
-  font-weight: 500;
-  border-top: 1px solid var(--border);
-}
-
-.error-toast {
-  display: none;
-  background: rgba(196,55,46,0.08);
-  border: 1px solid rgba(196,55,46,0.25);
-  border-radius: var(--radius);
-  padding: 10px 14px;
-  font-size: 13px;
-  color: var(--red);
-  margin-top: 12px;
-}
-
+.error-toast { display: none; background: rgba(196,55,46,0.08); border: 1px solid rgba(196,55,46,0.25); border-radius: var(--radius); padding: 10px 14px; font-size: 13px; color: var(--red); margin-top: 12px; }
 .error-toast.visible { display: block; }
 
 .success-wrap { text-align: center; padding: 8px 0; }
-
-.success-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: var(--green-bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 20px;
-}
-
+.success-icon { width: 56px; height: 56px; border-radius: 50%; background: var(--green-bg); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; }
 .success-title { font-size: 22px; font-weight: 600; color: var(--text); margin-bottom: 8px; letter-spacing: -0.3px; }
 .success-sub { font-size: 15px; color: var(--text2); margin-bottom: 28px; }
-
 .next-actions { display: flex; flex-direction: column; gap: 9px; }
-
-.next-action {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 13px 16px;
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  font-size: 14px;
-  color: var(--text);
-  cursor: pointer;
-  transition: background 0.15s;
-  font-family: var(--font);
-  width: 100%;
-  text-align: center;
-}
-
+.next-action { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 13px 16px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); font-size: 14px; color: var(--text); cursor: pointer; transition: background 0.15s; font-family: var(--font); width: 100%; text-align: center; }
 .next-action:hover { background: var(--bg3); }
-.next-action-icon { font-size: 16px; flex-shrink: 0; }
-
 .next-action-body { text-align: center; }
 .next-action-title { font-weight: 500; }
 .next-action-sub { font-size: 12px; color: var(--text3); margin-top: 2px; }
 
-.spinner {
-  width: 15px;
-  height: 15px;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-top-color: white;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-
+.spinner { width: 15px; height: 15px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
@@ -521,14 +243,14 @@ body {
   <div class="screen" id="s2">
     <div class="step-indicator">Step 2 of 4 — Project type</div>
     <div class="step-heading">What kind of project?</div>
-    <div class="step-sub">This sets the pre-production template.</div>
+    <div class="step-sub">Select all that apply.</div>
 
     <div class="type-grid" id="type-grid">
-      <button class="type-opt" onclick="selectType(this,'Video')"><span class="type-icon">🎬</span>Video</button>
-      <button class="type-opt" onclick="selectType(this,'Photo')"><span class="type-icon">📷</span>Photo</button>
-      <button class="type-opt" onclick="selectType(this,'Graphic')"><span class="type-icon">🎨</span>Graphic</button>
-      <button class="type-opt" onclick="selectType(this,'Podcast')"><span class="type-icon">🎙️</span>Podcast</button>
-      <button class="type-opt" onclick="selectType(this,'Other')" style="grid-column:span 2"><span class="type-icon">📁</span>Other</button>
+      <button class="type-opt" onclick="toggleType(this,'Video')"><span class="type-icon">🎬</span>Video</button>
+      <button class="type-opt" onclick="toggleType(this,'Photo')"><span class="type-icon">📷</span>Photo</button>
+      <button class="type-opt" onclick="toggleType(this,'Graphic')"><span class="type-icon">🎨</span>Graphic</button>
+      <button class="type-opt" onclick="toggleType(this,'Podcast')"><span class="type-icon">🎙️</span>Podcast</button>
+      <button class="type-opt" onclick="toggleType(this,'Other')" style="grid-column:span 2"><span class="type-icon">📁</span>Other</button>
     </div>
 
     <div class="btn-row">
@@ -630,7 +352,7 @@ body {
 
 <script>
 // Team members with Notion user IDs.
-// Add notionId for Kyle, Mike, Josh, Dominic once they join Notion.
+// Add notionId for Mike, Josh, Dominic once they join Notion.
 const TEAM_MEMBERS = [
   { name: 'Daniel',  initials: 'D',  color: '#4a7fa8', notionId: '47e8ca8f-9729-4208-a6a9-484564e9b077' },
   { name: 'Gavin',   initials: 'G',  color: '#7060a8', notionId: '229d872b-594c-812d-9b82-00021bbcf61c' },
@@ -641,7 +363,6 @@ const TEAM_MEMBERS = [
   // { name: 'Dominic', initials: 'Do', color: '#806080', notionId: null },
 ];
 
-// Render assignee chips from TEAM_MEMBERS
 function renderAssigneeGrid() {
   const grid = document.getElementById('assignee-grid');
   grid.innerHTML = TEAM_MEMBERS.map(m => `
@@ -669,7 +390,8 @@ loadClients();
 
 let state = {
   name: '', clientName: '', clientId: '',
-  type: '', hasShoot: true,
+  types: [],  // array — supports multi-select
+  hasShoot: true,
   shootDate: '', dueDate: '',
   assignees: [], createdPageUrl: ''
 };
@@ -711,10 +433,14 @@ function addNewClient() {
   }
 }
 
-function selectType(el, type) {
-  document.querySelectorAll('#type-grid .type-opt').forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
-  state.type = type;
+// Multi-select: click to select, click again to deselect
+function toggleType(el, type) {
+  el.classList.toggle('selected');
+  if (el.classList.contains('selected')) {
+    if (!state.types.includes(type)) state.types.push(type);
+  } else {
+    state.types = state.types.filter(t => t !== type);
+  }
 }
 
 function toggleShoot() {
@@ -739,13 +465,14 @@ function goTo(step) {
     if (!state.name) { document.getElementById('proj-name').focus(); return; }
     if (!state.clientName) { clientInput.focus(); return; }
   }
-  if (step === 3 && !state.type) return;
+  // Require at least one type before advancing
+  if (step === 3 && state.types.length === 0) return;
   if (step === 4) {
     state.shootDate = document.getElementById('shoot-date').value;
     state.dueDate = document.getElementById('due-date').value;
     document.getElementById('sum-name').textContent = state.name;
     document.getElementById('sum-client').textContent = state.clientName;
-    document.getElementById('sum-type').textContent = state.type;
+    document.getElementById('sum-type').textContent = state.types.join(', ');
     document.getElementById('sum-shoot').textContent = state.hasShoot && state.shootDate
       ? new Date(state.shootDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
       : 'No shoot';
@@ -767,7 +494,6 @@ async function createProject() {
   btn.disabled = true;
   btn.innerHTML = '<div class="spinner"></div> Creating...';
 
-  // Map selected names to Notion user IDs
   const assignedTo = state.assignees
     .map(name => TEAM_MEMBERS.find(m => m.name === name)?.notionId)
     .filter(Boolean);
@@ -780,7 +506,7 @@ async function createProject() {
         name: state.name,
         clientName: state.clientName,
         clientId: state.clientId,
-        type: state.type,
+        types: state.types,  // array sent to API
         hasShoot: state.hasShoot,
         shootDate: state.shootDate,
         dueDate: state.dueDate,
@@ -811,7 +537,7 @@ function openNotion() {
 }
 
 function resetForm() {
-  state = { name: '', clientName: '', clientId: '', type: '', hasShoot: true, shootDate: '', dueDate: '', assignees: [], createdPageUrl: '' };
+  state = { name: '', clientName: '', clientId: '', types: [], hasShoot: true, shootDate: '', dueDate: '', assignees: [], createdPageUrl: '' };
   document.getElementById('proj-name').value = '';
   clientInput.value = '';
   document.getElementById('client-id').value = '';
