@@ -124,6 +124,10 @@ body {
 .field-input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-bg); }
 .field-input::placeholder { color: var(--text3); }
 
+/* Side-by-side time fields */
+.time-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+.time-row .field { margin-bottom: 0; }
+
 .type-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 9px; }
 
 .type-opt {
@@ -278,6 +282,17 @@ body {
       <input class="field-input" type="date" id="shoot-date">
     </div>
 
+    <div id="shoot-time-fields" class="time-row">
+      <div class="field">
+        <div class="field-label">Start time <span style="color:var(--text3);font-weight:400">(optional)</span></div>
+        <input class="field-input" type="time" id="shoot-start-time">
+      </div>
+      <div class="field">
+        <div class="field-label">End time <span style="color:var(--text3);font-weight:400">(optional)</span></div>
+        <input class="field-input" type="time" id="shoot-end-time">
+      </div>
+    </div>
+
     <div class="field">
       <div class="field-label">Due date</div>
       <input class="field-input" type="date" id="due-date">
@@ -351,8 +366,6 @@ body {
 </div>
 
 <script>
-// Team members with Notion user IDs.
-// Add notionId for Mike, Josh, Dominic once they join Notion.
 const TEAM_MEMBERS = [
   { name: 'Daniel',  initials: 'D',  color: '#4a7fa8', notionId: '47e8ca8f-9729-4208-a6a9-484564e9b077' },
   { name: 'Gavin',   initials: 'G',  color: '#7060a8', notionId: '229d872b-594c-812d-9b82-00021bbcf61c' },
@@ -371,37 +384,32 @@ function renderAssigneeGrid() {
     </button>
   `).join('');
 }
-
 renderAssigneeGrid();
 
 let CLIENTS = [];
-
 async function loadClients() {
   try {
     const res = await fetch('/api/clients');
     const data = await res.json();
     CLIENTS = data.clients || [];
-  } catch (err) {
-    console.error('Failed to load clients:', err);
-  }
+  } catch (err) { console.error('Failed to load clients:', err); }
 }
-
 loadClients();
 
 let state = {
   name: '', clientName: '', clientId: '',
-  types: [],  // array — supports multi-select
+  types: [],
   hasShoot: true,
-  shootDate: '', dueDate: '',
+  shootDate: '', shootStartTime: '', shootEndTime: '',
+  dueDate: '',
   assignees: [], createdPageUrl: ''
 };
 
 const clientInput = document.getElementById('client-input');
-const clientList = document.getElementById('client-list');
+const clientList  = document.getElementById('client-list');
 
 clientInput.addEventListener('focus', () => renderClientList(clientInput.value));
 clientInput.addEventListener('input', () => renderClientList(clientInput.value));
-
 document.addEventListener('click', e => {
   if (!e.target.closest('.client-dropdown')) clientList.classList.remove('open');
 });
@@ -433,7 +441,6 @@ function addNewClient() {
   }
 }
 
-// Multi-select: click to select, click again to deselect
 function toggleType(el, type) {
   el.classList.toggle('selected');
   if (el.classList.contains('selected')) {
@@ -446,7 +453,9 @@ function toggleType(el, type) {
 function toggleShoot() {
   state.hasShoot = !state.hasShoot;
   document.getElementById('shoot-toggle').classList.toggle('on', state.hasShoot);
-  document.getElementById('shoot-date-field').style.display = state.hasShoot ? 'block' : 'none';
+  const show = state.hasShoot ? 'block' : 'none';
+  document.getElementById('shoot-date-field').style.display = show;
+  document.getElementById('shoot-time-fields').style.display = state.hasShoot ? 'grid' : 'none';
 }
 
 function toggleAssign(el, name) {
@@ -458,6 +467,18 @@ function toggleAssign(el, name) {
   }
 }
 
+function formatShootSummary(date, startTime, endTime) {
+  if (!date) return 'No shoot';
+  const d = new Date(date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  if (!startTime) return d;
+  const fmt = t => {
+    const [h, m] = t.split(':');
+    const hr = parseInt(h);
+    return `${hr % 12 || 12}:${m}${hr < 12 ? 'am' : 'pm'}`;
+  };
+  return endTime ? `${d}, ${fmt(startTime)} – ${fmt(endTime)}` : `${d}, ${fmt(startTime)}`;
+}
+
 function goTo(step) {
   if (step === 2) {
     state.name = document.getElementById('proj-name').value.trim();
@@ -465,21 +486,23 @@ function goTo(step) {
     if (!state.name) { document.getElementById('proj-name').focus(); return; }
     if (!state.clientName) { clientInput.focus(); return; }
   }
-  // Require at least one type before advancing
   if (step === 3 && state.types.length === 0) return;
   if (step === 4) {
-    state.shootDate = document.getElementById('shoot-date').value;
-    state.dueDate = document.getElementById('due-date').value;
-    document.getElementById('sum-name').textContent = state.name;
+    state.shootDate      = document.getElementById('shoot-date').value;
+    state.shootStartTime = document.getElementById('shoot-start-time').value;
+    state.shootEndTime   = document.getElementById('shoot-end-time').value;
+    state.dueDate        = document.getElementById('due-date').value;
+
+    document.getElementById('sum-name').textContent   = state.name;
     document.getElementById('sum-client').textContent = state.clientName;
-    document.getElementById('sum-type').textContent = state.types.join(', ');
-    document.getElementById('sum-shoot').textContent = state.hasShoot && state.shootDate
-      ? new Date(state.shootDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    document.getElementById('sum-type').textContent   = state.types.join(', ');
+    document.getElementById('sum-shoot').textContent  = state.hasShoot
+      ? formatShootSummary(state.shootDate, state.shootStartTime, state.shootEndTime)
       : 'No shoot';
-    document.getElementById('sum-due').textContent = state.dueDate
+    document.getElementById('sum-due').textContent    = state.dueDate
       ? new Date(state.dueDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
       : 'Not set';
-    document.getElementById('sum-team').textContent = state.assignees.length > 0 ? state.assignees.join(', ') : 'Unassigned';
+    document.getElementById('sum-team').textContent   = state.assignees.length > 0 ? state.assignees.join(', ') : 'Unassigned';
   }
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('s' + step).classList.add('active');
@@ -498,6 +521,23 @@ async function createProject() {
     .map(name => TEAM_MEMBERS.find(m => m.name === name)?.notionId)
     .filter(Boolean);
 
+  // Build the shoot date payload:
+  // - no date → omit
+  // - date only → full-day (start with no time)
+  // - date + start time → timed start, no end
+  // - date + start + end → timed range
+  let shootDatePayload = null;
+  if (state.hasShoot && state.shootDate) {
+    if (state.shootStartTime) {
+      shootDatePayload = {
+        start: `${state.shootDate}T${state.shootStartTime}:00`,
+        end: state.shootEndTime ? `${state.shootDate}T${state.shootEndTime}:00` : null
+      };
+    } else {
+      shootDatePayload = { start: state.shootDate }; // full-day
+    }
+  }
+
   try {
     const res = await fetch('/api/create-project', {
       method: 'POST',
@@ -506,9 +546,9 @@ async function createProject() {
         name: state.name,
         clientName: state.clientName,
         clientId: state.clientId,
-        types: state.types,  // array sent to API
+        types: state.types,
         hasShoot: state.hasShoot,
-        shootDate: state.shootDate,
+        shootDatePayload,
         dueDate: state.dueDate,
         assignedTo
       })
@@ -537,14 +577,17 @@ function openNotion() {
 }
 
 function resetForm() {
-  state = { name: '', clientName: '', clientId: '', types: [], hasShoot: true, shootDate: '', dueDate: '', assignees: [], createdPageUrl: '' };
+  state = { name: '', clientName: '', clientId: '', types: [], hasShoot: true, shootDate: '', shootStartTime: '', shootEndTime: '', dueDate: '', assignees: [], createdPageUrl: '' };
   document.getElementById('proj-name').value = '';
   clientInput.value = '';
   document.getElementById('client-id').value = '';
   document.getElementById('shoot-date').value = '';
+  document.getElementById('shoot-start-time').value = '';
+  document.getElementById('shoot-end-time').value = '';
   document.getElementById('due-date').value = '';
   document.getElementById('shoot-toggle').classList.add('on');
   document.getElementById('shoot-date-field').style.display = 'block';
+  document.getElementById('shoot-time-fields').style.display = 'grid';
   document.getElementById('error-toast').classList.remove('visible');
   document.getElementById('progress').style.width = '25%';
   document.getElementById('progress').style.background = '';
