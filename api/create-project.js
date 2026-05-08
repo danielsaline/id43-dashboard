@@ -5,7 +5,7 @@ export default async function handler(req, res) {
   const NOTION_TOKEN = process.env.NOTION_TOKEN;
   const PROJECTS_DB = '355b41f95ed680c7a1e2ec00430dd822';
 
-  const { name, clientId, type, types, hasShoot, shootDate, dueDate, assignedTo } = req.body;
+  const { name, clientId, type, types, hasShoot, shootDatePayload, dueDate, assignedTo } = req.body;
 
   // Support both legacy single `type` and new multi-select `types` array
   const typeList = types && types.length > 0 ? types : type ? [type] : [];
@@ -20,7 +20,7 @@ export default async function handler(req, res) {
     };
 
     if (clientId)              properties['Client']     = { relation: [{ id: clientId }] };
-    if (shootDate && hasShoot) properties['Shoot Date'] = { date: { start: shootDate } };
+    if (shootDatePayload) properties['Shoot Date'] = { date: shootDatePayload };
     if (dueDate)               properties['Due Date']   = { date: { start: dueDate } };
 
     if (assignedTo && assignedTo.length > 0) {
