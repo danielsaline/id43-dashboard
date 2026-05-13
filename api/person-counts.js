@@ -41,9 +41,14 @@ function assignedTo(page, person) {
   return people.some(p => (p.name || '').toLowerCase().includes(firstName));
 }
 
-function gearAssignedTo(page, firstName) {
-  const text = page.properties['Person']?.rich_text?.[0]?.plain_text || '';
-  return text.toLowerCase().includes(firstName);
+function gearAssignedTo(page, person) {
+  const people = page.properties['Person']?.people || [];
+  if (person.notionId) {
+    return people.some(p => p.id === person.notionId);
+  }
+  // Fallback: name match for users not yet in Notion
+  const firstName = person.name.split(' ')[0];
+  return people.some(p => (p.name || '').toLowerCase().includes(firstName));
 }
 
 export default async function handler(req, res) {
@@ -110,7 +115,7 @@ export default async function handler(req, res) {
 
     const activeProjects = allActive.filter(p => assignedTo(p, person)).length;
     const shootsThisWeek = allShoots.filter(p => assignedTo(p, person)).length;
-    const gearOut        = allGear.filter(p => gearAssignedTo(p, firstName)).length;
+    const gearOut        = allGear.filter(p => gearAssignedTo(p, person)).length;
     const dueThisWeek    = allDue.filter(p => assignedTo(p, person)).length;
 
     return res.status(200).json({ activeProjects, shootsThisWeek, gearOut, dueThisWeek });
