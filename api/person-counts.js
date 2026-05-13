@@ -1,15 +1,17 @@
 const NOTION_TOKEN = process.env.NOTION_TOKEN;
 const PROJECTS_DB = '355b41f95ed680c7a1e2ec00430dd822';
-const GEAR_DB = '355b41f95ed6803dbc74c508d213683b';
+const GEAR_DB     = '355b41f95ed6803dbc74c508d213683b';
 
+// Map URL key -> Notion user ID
+// Add Mike, Josh, Dominic IDs once they join Notion
 const PERSON_MAP = {
-  daniel:  'daniel saline',
-  kyle:    'kyle moeller',
-  gavin:   'gavin izzard',
-  joel:    'joel schneider',
-  josh:    'josh',
-  mike:    'mike walsh',
-  dominic: 'dominic shelden',
+  daniel:  { name: 'daniel saline',    notionId: '47e8ca8f-9729-4208-a6a9-484564e9b077' },
+  kyle:    { name: 'kyle moeller',     notionId: '359d872b-594c-81f3-b868-000231611f31' },
+  gavin:   { name: 'gavin izzard',     notionId: '229d872b-594c-812d-9b82-00021bbcf61c' },
+  joel:    { name: 'joel schneider',   notionId: '37247952-f736-473b-adc9-44436d660369' },
+  josh:    { name: 'josh schneider',   notionId: null },
+  mike:    { name: 'mike walsh',       notionId: null },
+  dominic: { name: 'dominic shelden',  notionId: null },
 };
 
 async function queryNotion(databaseId, filter) {
@@ -28,9 +30,14 @@ async function queryNotion(databaseId, filter) {
   return data.results || [];
 }
 
-function assignedTo(page, personName) {
+// Match by Notion user ID if available, fall back to name match
+function assignedTo(page, person) {
   const people = page.properties['Assigned to']?.people || [];
-  const firstName = personName.split(' ')[0];
+  if (person.notionId) {
+    return people.some(p => p.id === person.notionId);
+  }
+  // Fallback: name match for users not yet in Notion
+  const firstName = person.name.split(' ')[0];
   return people.some(p => (p.name || '').toLowerCase().includes(firstName));
 }
 
@@ -44,47 +51,45 @@ export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
 
   const personKey = (req.query.person || '').toLowerCase();
-  const personName = PERSON_MAP[personKey];
-
-  if (!personName) {
+  const person = PERSON_MAP[personKey];
+  if (!person) {
     return res.status(400).json({
       error: `Unknown person: "${personKey}". Valid: ${Object.keys(PERSON_MAP).join(', ')}`
     });
   }
 
-  const firstName = personName.split(' ')[0];
+  const firstName = person.name.split(' ')[0];
 
   try {
-    // Normalize to midnight
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Start of this week (Sunday) — matches Notion's full week view
     const weekStart = new Date(today);
     weekStart.setDate(today.getDate() - today.getDay());
     weekStart.setHours(0, 0, 0, 0);
 
-    // End of this Saturday
     const weekEnd = new Date(weekStart);
     weekEnd.setDate(weekStart.getDate() + 6);
     weekEnd.setHours(23, 59, 59, 999);
 
-    // Rolling 7 days for due this week
     const dueEnd = new Date(today);
     dueEnd.setDate(today.getDate() + 7);
     dueEnd.setHours(23, 59, 59, 999);
 
     const weekStartStr = weekStart.toISOString().split('T')[0];
-    const weekEndStr = weekEnd.toISOString().split('T')[0];
-    const todayStr = today.toISOString().split('T')[0];
-    const dueEndStr = dueEnd.toISOString().split('T')[0];
+    const weekEndStr   = weekEnd.toISOString().split('T')[0];
+    const todayStr     = today.toISOString().split('T')[0];
+    const dueEndStr    = dueEnd.toISOString().split('T')[0];
 
     const activeStatuses = ['In Progress', 'To Do', 'Review'];
 
+    // FIX: Status is a `status` type in Notion, not `select`
+    const statusFilter = {
+      or: activeStatuses.map(s => ({ property: 'Status', status: { equals: s } }))
+    };
+
     const [allActive, allShoots, allGear, allDue] = await Promise.all([
-      queryNotion(PROJECTS_DB, {
-        or: activeStatuses.map(s => ({ property: 'Status', select: { equals: s } }))
-      }),
+      queryNotion(PROJECTS_DB, statusFilter),
       queryNotion(PROJECTS_DB, {
         and: [
           { property: 'Shoot Date', date: { on_or_after: weekStartStr } },
@@ -96,20 +101,19 @@ export default async function handler(req, res) {
       }),
       queryNotion(PROJECTS_DB, {
         and: [
-          { or: activeStatuses.map(s => ({ property: 'Status', select: { equals: s } })) },
+          statusFilter,
           { property: 'Due Date', date: { on_or_after: todayStr } },
           { property: 'Due Date', date: { on_or_before: dueEndStr } },
         ]
       }),
     ]);
 
-    const activeProjects = allActive.filter(p => assignedTo(p, personName)).length;
-    const shootsThisWeek = allShoots.filter(p => assignedTo(p, personName)).length;
+    const activeProjects = allActive.filter(p => assignedTo(p, person)).length;
+    const shootsThisWeek = allShoots.filter(p => assignedTo(p, person)).length;
     const gearOut        = allGear.filter(p => gearAssignedTo(p, firstName)).length;
-    const dueThisWeek    = allDue.filter(p => assignedTo(p, personName)).length;
+    const dueThisWeek    = allDue.filter(p => assignedTo(p, person)).length;
 
     return res.status(200).json({ activeProjects, shootsThisWeek, gearOut, dueThisWeek });
-
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: err.message });
