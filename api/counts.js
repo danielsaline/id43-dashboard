@@ -24,7 +24,7 @@ export default async function handler(req, res) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Start of this week (Sunday) — so tile matches Notion's full Mon-Sun week view
+    // Start of this week (Sunday)
     const weekStart = new Date(today);
     weekStart.setDate(today.getDate() - today.getDay());
     weekStart.setHours(0, 0, 0, 0);
@@ -41,8 +41,9 @@ export default async function handler(req, res) {
 
     const activeStatuses = ['To Do', 'In Progress', 'Review'];
 
+    // FIX: Status is a `status` type property, not `select`
     const activeProjects = projects.filter(p =>
-      activeStatuses.includes(p.properties?.Status?.select?.name)
+      activeStatuses.includes(p.properties?.Status?.status?.name)
     ).length;
 
     const shootsThisWeek = projects.filter(p => {
@@ -59,7 +60,9 @@ export default async function handler(req, res) {
 
     const dueThisWeek = projects.filter(p => {
       const d = p.properties?.['Due Date']?.date?.start;
-      if (!d || p.properties?.Status?.select?.name === 'Done') return false;
+      if (!d) return false;
+      // FIX: Status is a `status` type property, not `select`
+      if (p.properties?.Status?.status?.name === 'Done') return false;
       const due = new Date(d);
       due.setHours(0, 0, 0, 0);
       return due >= today && due <= dueEnd;
