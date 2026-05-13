@@ -9,7 +9,7 @@ const PERSON_MAP = {
   kyle:    { name: 'kyle moeller',     notionId: '359d872b-594c-81f3-b868-000231611f31' },
   gavin:   { name: 'gavin izzard',     notionId: '229d872b-594c-812d-9b82-00021bbcf61c' },
   joel:    { name: 'joel schneider',   notionId: '37247952-f736-473b-adc9-44436d660369' },
-  josh:    { name: 'josh schneider',   notionId: null },
+  josh:    { name: 'josh schneider', notionId: '35ad872b-594c-819f-b35b-000277c0388c' },
   mike:    { name: 'mike walsh',       notionId: null },
   dominic: { name: 'dominic shelden',  notionId: null },
 };
