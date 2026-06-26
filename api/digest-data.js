@@ -116,10 +116,8 @@ function relationIds(page, prop) {
   return p && p.relation ? p.relation.map((r) => r.id) : [];
 }
 
-module.exports = async function handler(req, res) {
-  // NOTE: if counts.js uses `export default` instead of `module.exports`,
-  // change this line to match — Vercel needs one consistent module style
-  // across the api/ folder depending on how package.json is configured.
+export default async function handler(req, res) {
+  // Matches the export style used in counts.js.
 
   if (!NOTION_TOKEN) {
     res.status(500).json({ error: 'NOTION_TOKEN env var is not set on this Vercel project.' });
